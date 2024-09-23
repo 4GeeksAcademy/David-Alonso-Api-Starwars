@@ -256,10 +256,16 @@ def add_planet():
     }
     return (response_body),200
 
-@app.route('/user/<int:user_id>/favorite/planet/<int:planet_id>', methods=['POST'])
-def add_favorite_planet(user_id, planet_id):
-    user = User.query.get(user_id)
-    planet = Planet.query.get(planet_id)
+@app.route('/planet_fav/', methods=['POST'])
+def add_favorite_planet():
+    request_body= request.get_json()
+    user = User.query.get(request_body['user_id'])
+    planet = Planet.query.get(request_body['planet_id'])
+    new_fav_planet = PlanetFavView (
+        
+        user_id = request_body['user_id'],
+        planet_id = request_body['planet_id']
+    )
 
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -267,19 +273,56 @@ def add_favorite_planet(user_id, planet_id):
         return jsonify({"error": "Planet not found"}), 404
 
     # Verificar si el planeta ya está en la lista de favoritos
-    if planet in user.favorite_planets:
+    planet_fav = PlanetFavView.query.filter_by(
+        user_id = request_body['user_id'],
+        planet_id = request_body['planet_id']
+    ).first()
+    if planet_fav: 
         return jsonify({"msg": "Planet already in favorites"}), 400
-
-    # Añadir el planeta a los favoritos del usuario
-    user.favorite_planets.append(planet)
+    
+    db.session.add(new_fav_planet)
     db.session.commit()
 
-    return jsonify({
-        "msg": f"Planet {planet.name} has been added to favorites",
-        "favorite_planets": [p.serialize() for p in user.favorite_planets]
-    }), 200
+    return jsonify (
+        new_fav_planet.serialize (),
+        # "msg": f"Planet {planet.name} has been added to favorites"
+        # "favorite_planets": [p.serialize() for p in user.favorite_planets]
+    ), 200
+
+@app.route('/character_fav', methods=['POST'])
+def add_favorite_character():
+    request_body= request.get_json()
+    user = User.query.get(request_body['user_id'])
+    character = Character.query.get(request_body['character_id'])
+    new_fav_character = CharacterFavView (
+        
+        user_id = request_body['user_id'],
+        character_id = request_body['character_id']
+    )
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    if not character:
+        return jsonify({"error": "Character not found"}), 404
+
+    # Verificar si el planeta ya está en la lista de favoritos
+    character_fav = CharacterFavView.query.filter_by(
+        user_id = request_body['user_id'],
+        character_id = request_body['character_id']
+    ).first()
+    if character_fav: 
+        return jsonify({"msg": "Planet already in favorites"}), 400
+    
+    db.session.add(new_fav_character)
+    db.session.commit()
+
+    return jsonify (
+        new_fav_character.serialize (),
+        # "msg": f"Planet {planet.name} has been added to favorites"
+        # "favorite_planets": [p.serialize() for p in user.favorite_planets]
+    ), 200
 
 
-
+if __name__ == "__main__":
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
