@@ -17,7 +17,7 @@ def setup_admin(app):
     # class Planet_fav(ModelView):
     #     can_create = False
     #     can_edit = False
-    #     can_delete = False
+    #     can_delete = Falsefd
         
     #     column_list = ('user_id', 'planet_id')  # Puedes ajustar los campos que quieras mostrar
 

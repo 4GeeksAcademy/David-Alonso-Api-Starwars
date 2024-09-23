@@ -26,7 +26,7 @@ db.init_app(app)
 CORS(app)
 setup_admin(app)
 
-# Handle/serialize errors like a JSON object
+# Handle/serialize errors like a JSON objectAlberto el mejor !
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code

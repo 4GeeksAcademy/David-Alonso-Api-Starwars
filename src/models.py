@@ -26,7 +26,7 @@ class User(db.Model):
             "email": self.email,
             "favorite_planets": [planet.serialize() for planet in self.planet_fav]
         }
-
+# fdfdf
 
 class Character(db.Model):
 
