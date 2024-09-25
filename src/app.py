@@ -174,6 +174,33 @@ def delete_planet(planet_id):
 
    
     return jsonify({'message': f'{planet_id} planet has been delete'}), 200
+    
+@app.route('/fav_character/<int:character_id>/<int:user_id>', methods=['DELETE'])
+def delete__favorite_character(character_id,user_id):
+    
+    character_fav = CharacterFavView.query.filter_by(user_id=user_id, character_id=character_id).first()
+    if character_fav is None:
+        return jsonify({"error": "Favorite character not found"}), 404
+    
+    db.session.delete(character_fav)
+    db.session.commit()
+
+   
+    return jsonify({'message': f'Chracter {character_id} has been removed from user {user_id} favorites'}), 200
+
+@app.route('/fav_planet/<int:planet_id>/<int:user_id>', methods=['DELETE'])
+def delete__favorite_planet(planet_id,user_id):
+    
+    planet_fav = PlanetFavView.query.filter_by(user_id=user_id, planet_id=planet_id).first()
+    if planet_fav is None:
+        return jsonify({"error": "Favorite planet not found"}), 404
+    
+    db.session.delete(planet_fav)
+    db.session.commit()
+
+   
+    return jsonify({'message': f'Planet {planet_id} has been removed from user {user_id} favorites'}), 200
+
 
 
 ########################################## POST #########################################
